@@ -24,6 +24,6 @@ stages:
       displayName: Build an image
       inputs:
         command: build
-        dockerfile: '$(Build.SourcesDirectory)/ContainerCloud/images/apache-backend/Dockerfile'
+        dockerfile: '$(Build.SourcesDirectory)/docker-images/OracleDatabase/SingleInstance/dockerfiles/19.3.0/Dockerfile'
         tags: |
           $(tag)
