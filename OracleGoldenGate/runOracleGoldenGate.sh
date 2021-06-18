@@ -229,6 +229,7 @@ function createDeployment {
              --portPmSrvr=${Port_MetricsServer} --enablePmSrvr=Yes \
              --portPmSrvrUdp=${Port_MetricsServerUDP} \
              --ggSchema=${OGG_SCHEMA} \
+             --envTnsAdmin=${TNS_ADMIN:=${OGG_DEPLOY_BASE}/${OGG_DEPLOYMENT}/etc} \
             ${secureOption}
     else
         return 0
@@ -247,7 +248,7 @@ function startReverseProxy {
         fi
     fi
     getCommand scl
-    ${SCL} enable rh-nginx18 -- nginx
+    ${SCL} enable rh-nginx118 -- nginx
 }
 
 ##

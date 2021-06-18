@@ -2,9 +2,6 @@
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 FROM oraclelinux:8-slim
 
-LABEL "provider"="Oracle"                                               \
-      "issues"="https://github.com/oracle/docker-images/issues"
-
 COPY *.module /etc/dnf/modules.d/
 
 RUN microdnf install httpd \
@@ -37,7 +34,11 @@ RUN microdnf install httpd \
     sed -i 's/;error_log = syslog/error_log = \/dev\/stderr/' /etc/php.ini && \
     ln -sf /dev/stdout /var/log/httpd/access_log && \
     ln -sf /dev/stderr /var/log/httpd/error_log && \
+    ln -sf /dev/stdout /var/log/httpd/ssl_access_log && \
+    ln -sf /dev/stderr /var/log/httpd/ssl_error_log && \
     # Disable userdirs and the auto-generated welcome message
     rm -f /etc/httpd/conf.d/{userdir.conf,welcome.conf}
+
+EXPOSE 80 443
 
 CMD ["/sbin/httpd", "-DFOREGROUND"]

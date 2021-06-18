@@ -1,4 +1,4 @@
-# Copyright (c) 2019 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2019,2021 Oracle and/or its affiliates. All rights reserved.
 #
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 #
@@ -18,10 +18,10 @@
 # Run:
 #      $ docker build -t oracle/serverjre:8 .
 #
-# This command is already scripted on build.sh so you can alternatively run
+# This command is already scripted in build.sh so you can alternatively run
 #		$ bash build.sh
 #
-# The builder image will be use to uncompress the tar.gz file with the Java Runtime.
+# The builder image will be used to uncompress the tar.gz file with the Java Runtime.
 
 FROM oraclelinux:7-slim as builder
 
@@ -42,8 +42,8 @@ ENV LANG en_US.UTF-8
 # Environment variables for the builder image.  
 # Required to validate that you are using the correct file
 
-ENV JAVA_PKG=server-jre-8u261-linux-x64.tar.gz \
-	JAVA_SHA256=970eec4e5212721d5c8f9f52a5ab89b776884dc3c886bfbe010973d30114ffa9 \
+ENV JAVA_PKG=server-jre-8u291-linux-x64.tar.gz \
+	JAVA_SHA256=21e567a9f71954bf2066e9a7e740dae08b212fd159311f2de7b628cf042ef057 \
 	JAVA_HOME=/usr/java/jdk-8
 
 COPY $JAVA_PKG /tmp/jdk.tgz
@@ -60,7 +60,7 @@ FROM oraclelinux:7-slim
 # Default to UTF-8 file.encoding
 ENV LANG en_US.UTF-8
 
-ENV JAVA_VERSION=1.8.0_261 \
+ENV JAVA_VERSION=1.8.0_291 \
 	JAVA_HOME=/usr/java/jdk-8 
 	
 ENV	PATH $JAVA_HOME/bin:$PATH
@@ -69,7 +69,8 @@ ENV	PATH $JAVA_HOME/bin:$PATH
 COPY --from=builder $JAVA_HOME $JAVA_HOME
 
 ##
-RUN	ln -sfT "$JAVA_HOME" /usr/java/default; \
+RUN	yum -y update; \
+	ln -sfT "$JAVA_HOME" /usr/java/default; \
 	ln -sfT "$JAVA_HOME" /usr/java/latest; \
 	for bin in "$JAVA_HOME/bin/"*; do \
 		base="$(basename "$bin")"; \
@@ -81,5 +82,6 @@ RUN	ln -sfT "$JAVA_HOME" /usr/java/default; \
 # See https://docs.oracle.com/javase/8/docs/technotes/guides/vm/class-data-sharing.html
 	java -Xshare:dump; \
 	java -version; \
-	javac -version
+	javac -version; \
+	grep VERSION= /etc/os-release
 	
